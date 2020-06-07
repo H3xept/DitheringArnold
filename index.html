@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dithering</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header" id="header">
+            <div id="header_image"></div>
+            <article>
+                <h1>Dithering arnold for fun and profit</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </article>
+        </div>
+        <article>
+            <h1>What is dithering?</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </article>
+        <article>
+            <h1>Quantisation visualisation</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="quantisation_visualisation">
+                <div><div id="qv_original"></div><span>Original</span></div>
+                <div><div id="qv_quantised"></div><span>Quantised</span></div>
+                <div style="background-color: pink;">
+                    <div><div id="qv_original_cp"></div><span>Original color palette</span></div>
+                    <div><div id="qv_quantised_cp"></div><span>Quantised color palette</span></div>
+                </div>
+            </div>
+        </article>
+
+        <article>
+            <h1>Algoritm visualisation</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="algoritm_visualisation">
+                <div><div id="firm_bottom"></div><span>Firm Bottom</span></div>
+                <div><div id="av_kernel"></div><span>Kernel</span></div>
+                <div><div id="av_color_comparison"></div><span>Kernel</span></div>
+                <div style="background-color: palegoldenrod;"></div>
+            </div>
+        </article>
+
+        <article>
+            <h1>Quantised RGB channels</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="hor_flex">
+                <div style="background-color: red;"></div>
+                <div style="background-color: blueviolet;"></div>
+                <div style="background-color: pink;"></div>
+            </div>
+        </article>
+
+        <article>
+            <h1>Dithered RGB channels</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="hor_flex">
+                <div style="background-color: red;"></div>
+                <div style="background-color: blueviolet;"></div>
+                <div style="background-color: pink;"></div>
+            </div>
+        </article>
+    </div>
+    <script type="module">
+        import filtered_image from "./js/filtered_image.js"
+        import color_palette from "./js/color_palette.js"
+        import dithered_image_gen from "./js/dithered_image_gen.js"
+        import {floyd_steinberg, quantiseImage} from "./js/dither.js"
+        import {mighty_arm, firm_bottom, x2, x4, halven} from "./js/arnold_crop_utilities.js"
+        import pixel_kernel from "./js/pixel_kernel.js"
+        import color_comparison from "./js/color_comparison.js"
+
+        const header_image = new p5(filtered_image('./img/arnold.png', [floyd_steinberg]), document.getElementById('header_image'));
+        const qv_original = new p5(filtered_image('./img/arnold.png', [mighty_arm, x2]), document.getElementById('qv_original'));
+        const qv_quantised = new p5(filtered_image('./img/arnold.png', [mighty_arm, x2, quantiseImage]), document.getElementById('qv_quantised'));
+        const qv_original_cp = new p5(color_palette(qv_original), document.getElementById('qv_original_cp'));
+        const qv_quantised_cp = new p5(color_palette(qv_original), document.getElementById('qv_quantised_cp'));
+        qv_original.addRedrawListener(qv_original_cp.newImage);
+        qv_quantised.addRedrawListener(qv_quantised_cp.newImage);
+        const av_firm_bottom = new p5(dithered_image_gen('./img/arnold.png', [firm_bottom, halven], [x4]), document.getElementById('firm_bottom'));
+        const av_kernel = new p5(pixel_kernel(), document.getElementById('av_kernel'))
+        const av_color_comparison = new p5(color_comparison(), document.getElementById('av_color_comparison'))
+        av_firm_bottom.addRedrawListener(av_color_comparison.newImage);
+        av_firm_bottom.addRedrawListener(av_kernel.newImage);
+    </script>
+</body>
+</html>
