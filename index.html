@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dithering</title>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+    <script src="./js/p5.min.js"></script>
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
@@ -40,7 +40,6 @@
                 <div><div id="firm_bottom"></div><span>Firm Bottom</span></div>
                 <div><div id="av_kernel"></div><span>Kernel</span></div>
                 <div><div id="av_color_comparison"></div><span>Kernel</span></div>
-                <div style="background-color: palegoldenrod;"></div>
             </div>
         </article>
 
@@ -48,9 +47,9 @@
             <h1>Quantised RGB channels</h1>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
             <div class="hor_flex">
-                <div style="background-color: red;"></div>
-                <div style="background-color: blueviolet;"></div>
-                <div style="background-color: pink;"></div>
+                <div><div id="q_channel_r"></div><span>Red</span></div>
+                <div><div id="q_channel_g"></div><span>Green</span></div>
+                <div><div id="q_channel_b"></div><span>Blue</span></div>
             </div>
         </article>
 
@@ -58,9 +57,9 @@
             <h1>Dithered RGB channels</h1>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
             <div class="hor_flex">
-                <div style="background-color: red;"></div>
-                <div style="background-color: blueviolet;"></div>
-                <div style="background-color: pink;"></div>
+                <div><div id="d_channel_r"></div><span>Red</span></div>
+                <div><div id="d_channel_g"></div><span>Green</span></div>
+                <div><div id="d_channel_b"></div><span>Blue</span></div>
             </div>
         </article>
     </div>
@@ -70,6 +69,7 @@
         import dithered_image_gen from "./js/dithered_image_gen.js"
         import {floyd_steinberg, quantiseImage} from "./js/dither.js"
         import {mighty_arm, firm_bottom, x2, x4, halven} from "./js/arnold_crop_utilities.js"
+        import {redChannelOnly, greenChannelOnly, blueChannelOnly} from "./js/imageUtils.js"
         import pixel_kernel from "./js/pixel_kernel.js"
         import color_comparison from "./js/color_comparison.js"
 
@@ -80,11 +80,19 @@
         const qv_quantised_cp = new p5(color_palette(qv_original), document.getElementById('qv_quantised_cp'));
         qv_original.addRedrawListener(qv_original_cp.newImage);
         qv_quantised.addRedrawListener(qv_quantised_cp.newImage);
-        const av_firm_bottom = new p5(dithered_image_gen('./img/arnold.png', [firm_bottom, halven], [x4]), document.getElementById('firm_bottom'));
+        const av_firm_bottom = new p5(dithered_image_gen('./img/arnold.png', [firm_bottom, halven], []), document.getElementById('firm_bottom'));
         const av_kernel = new p5(pixel_kernel(), document.getElementById('av_kernel'))
         const av_color_comparison = new p5(color_comparison(), document.getElementById('av_color_comparison'))
-        av_firm_bottom.addRedrawListener(av_color_comparison.newImage);
         av_firm_bottom.addRedrawListener(av_kernel.newImage);
+        av_firm_bottom.addRedrawListener(av_color_comparison.newImage);
+        
+        const q_channel_r = new p5(filtered_image('./img/arnold.png', [halven, quantiseImage, redChannelOnly]), 'q_channel_r');
+        const q_channel_g = new p5(filtered_image('./img/arnold.png', [halven, quantiseImage, greenChannelOnly]), 'q_channel_g');
+        const q_channel_b = new p5(filtered_image('./img/arnold.png', [halven, quantiseImage, blueChannelOnly]), 'q_channel_b');
+
+        const d_channel_r = new p5(filtered_image('./img/arnold.png', [halven, floyd_steinberg, redChannelOnly]), 'd_channel_r');
+        const d_channel_g = new p5(filtered_image('./img/arnold.png', [halven, floyd_steinberg, greenChannelOnly]), 'd_channel_g');
+        const d_channel_b = new p5(filtered_image('./img/arnold.png', [halven, floyd_steinberg, blueChannelOnly]), 'd_channel_b');
     </script>
 </body>
 </html>

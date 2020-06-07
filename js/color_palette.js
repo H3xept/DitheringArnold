@@ -5,6 +5,7 @@ export default () => {
     let img = null;
     let dirty = true;
     let canvas = null;
+    let getParentDimensions = () => canvas.parent().getBoundingClientRect()
 
     return e => {
 
@@ -35,25 +36,18 @@ export default () => {
         e.newImage = function(i) {
             img = i;
         }
-        
-        e.fitToParent = function() {
-            const {width} = canvas.parent().getBoundingClientRect()
-            if (width != canvas.width) {
-                canvas.resize(width, 40) 
-            }
-        }
 
         e.setup = function() {
-            canvas = e.createCanvas(300, 40)
-            e.fitToParent()
+            canvas = e.createCanvas(100, 40)
         }
         
         e.draw = function() {
             if (dirty && img != null) {
+                e.resizeCanvas(getParentDimensions().width, canvas.height)
                 img.loadPixels()
                 displayPalette(calculatePalette(getPixels(img)))
                 dirty = false;
-            } e.fitToParent()
+            }
         }
     }
 }

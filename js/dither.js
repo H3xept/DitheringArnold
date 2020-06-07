@@ -62,12 +62,10 @@ export const floyd_steinberg_gen = function*(img, e1 = 7, e2 = 3, e3 = 5, e4 = 1
     const _getPixel = getPixel(img)
     const _quantise = quantise(255)
 
-    
     for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
             
             const [oldR, oldG, oldB] = _getPixel(x,y)
-            console.log(x,y,oldR, oldG, oldB)
             if (oldR === 0 && oldG === 0 && oldB === 0) continue;
 
             const [newR, newG, newB] = [oldR, oldG, oldB].map(e => _quantise(e, quantSteps))

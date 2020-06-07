@@ -1,9 +1,13 @@
 import {floyd_steinberg_gen} from "./dither.js"
 
 export default (img_src, preProcessingFilters = [], postProcessingFilters = []) => {
+    
     let img = null;
-    let dirty = true;
     let generator = null;
+    let dirty = null;
+    let canvas = null;
+
+    let getCanvasDimensions = () => canvas.parent().getBoundingClientRect()
 
     return e => {
         
@@ -17,7 +21,7 @@ export default (img_src, preProcessingFilters = [], postProcessingFilters = []) 
         }
 
         e.setup = function() {
-            e.createCanvas(img.width, img.height)
+            canvas = e.createCanvas(100, 100)
             img = preProcessingFilters.reduce((res, f) => f(res), img)
             generator = floyd_steinberg_gen(img.get())
             e.frameRate(1)
@@ -32,11 +36,11 @@ export default (img_src, preProcessingFilters = [], postProcessingFilters = []) 
             const {x, y, img: _img, oldColor, newColor} = value
             e.background(e.color(255,255,255))
             const postProcessedImage = postProcessingFilters.reduce((res, f) => f(res), _img)
-            e.resizeCanvas(postProcessedImage.width, postProcessedImage.height)
+            postProcessedImage.resize(getCanvasDimensions().width, 0)
+            e.resizeCanvas(getCanvasDimensions().width, postProcessedImage.height)
             e.image(postProcessedImage, 0,0)
             dirty = false;
             e.redrawListeners.forEach(l => {
-                console.log(oldColor)
                 l(img.get(), x, y, oldColor, newColor)
             })
         }

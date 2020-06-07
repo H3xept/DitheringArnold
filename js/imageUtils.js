@@ -22,13 +22,15 @@ const rgbAt = (pixels, i) => [pixels[i], pixels[i+1], pixels[i+2]]
  * @param {int} y the y coordinate of the pixel to set
  * @param {[int]} rgb the RGB values to assign to the pixel
  */
-export const setPixel = img => (x, y, rgb) => {
+export const setPixel = img => (x, y, rgba) => {
     const w = img.width
     const i = linearIndex(x,y,w)
     const pixels = img.pixels
-    pixels[i + 0] = rgb[0]
-    pixels[i + 1] = rgb[1]
-    pixels[i + 2] = rgb[2]
+    pixels[i + 0] = rgba[0]
+    pixels[i + 1] = rgba[1]
+    pixels[i + 2] = rgba[2]
+    if (rgba.length > 3)
+        pixels[i + 3] = rgba[3]
 }
 
 /**
@@ -52,11 +54,31 @@ export const getPixel = img => (x,y) => {
 export const getPixels = img => {
     const pxs = []
     const _getPixel = getPixel(img)
-    for (let x = 0; x < img.width; x++) {
-        for (let y = 0; y < img.height; y++) {
+    for (let y = 0; y < img.height; y++) {
+        for (let x = 0; x < img.width; x++) {
             pxs.push(_getPixel(x,y))
         }
     }
     return pxs
 }
 
+const mapPixels = img => f => {
+    const _getPixel = getPixel(img)
+    const _setPixel = setPixel(img)
+    for (let y = 0; y < img.height; y++) {
+        for (let x = 0; x < img.width; x++) {
+            const p = _getPixel(x,y)
+            _setPixel(x, y, f(p))
+        }
+    }
+    img.updatePixels()
+    return img
+}
+
+const redFilter = pix => [255, 0, 0, pix[0]]
+const greenFilter = pix => [0, 255, 0, pix[1]]
+const blueFilter = pix => [0, 0, 255, pix[2]]
+
+export const redChannelOnly = img => mapPixels(img)(redFilter)
+export const greenChannelOnly = img => mapPixels(img)(greenFilter)
+export const blueChannelOnly = img => mapPixels(img)(blueFilter)
