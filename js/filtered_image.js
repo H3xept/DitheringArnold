@@ -4,7 +4,7 @@ export default (img_src, filters) => {
     let dirty = true;
     let canvas = null;
 
-    let getCanvasDimensions = () => canvas.parent().getBoundingClientRect()
+    let getParentDimensions = () => canvas.parent().getBoundingClientRect()
 
     return e => {
         
@@ -24,13 +24,17 @@ export default (img_src, filters) => {
         e.draw = function() {
             if (dirty) {
                 img = filters.reduce((res, f) => f(res), img)
+                
+                // Responsive scaling
                 const imgAspectRatio = img.height/img.width
-                const parentW = getCanvasDimensions().width
-                e.resizeCanvas(parentW, parentW * imgAspectRatio)
+                const parentW = getParentDimensions().width
                 const scaled = img.get()
+                e.resizeCanvas(parentW, parentW * imgAspectRatio)
                 scaled.resize(parentW, parentW * imgAspectRatio)
+
                 e.image(scaled, 0,0)
                 dirty = false;
+                
                 e.redrawListeners.forEach(l => {
                     l(img)
                 })

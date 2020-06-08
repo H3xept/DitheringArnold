@@ -54,6 +54,18 @@ export const floyd_steinberg = (img, e1 = 7, e2 = 3, e3 = 5, e4 = 1, quantSteps 
     return img
 }
 
+/**
+ * Dithers a p5.js image with Floyd-Steinberg's algorithm - but it's a generator.
+ * Each iteration a new pixel is quantised + errors are propagated to the surrounding pix. kernel
+ * @param {p5.Image} img the image to dither
+ * @param {int} e1 the weight for the propagation of error 1
+ * @param {int} e2 the weight for the propagation of error 2
+ * @param {int} e3 the weight for the propagation of error 3
+ * @param {int} e4 the weight for the propagation of error 4
+ * @param {int} quantSteps the quantization steps to use for color palette quantization 
+ * @yields {int, int, p5.Image, [int,int,int], [int,int,int]} A list of useful stuff to represent current state of dithering
+ * @returns {p5.Image} the dithered image
+ */
 export const floyd_steinberg_gen = function*(img, e1 = 7, e2 = 3, e3 = 5, e4 = 1, quantSteps = 2) {
     img.loadPixels()
 
@@ -88,6 +100,11 @@ export const floyd_steinberg_gen = function*(img, e1 = 7, e2 = 3, e3 = 5, e4 = 1
     return img
 }
 
+/**
+ * A function to quantise an image's pixels
+ * @param {*} img the image to quantise
+ * @param {*} reducedColorPalette the number of colors per channel to use
+ */
 export const quantiseImage = (img, reducedColorPalette = 2) => {
     img.loadPixels()
 
