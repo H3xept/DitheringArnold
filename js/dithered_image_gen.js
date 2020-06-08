@@ -4,7 +4,6 @@ export default (img_src, preProcessingFilters = [], postProcessingFilters = []) 
     
     let img = null;
     let generator = null;
-    let dirty = null;
     let canvas = null;
 
     let getCanvasDimensions = () => canvas.parent().getBoundingClientRect()
@@ -24,7 +23,7 @@ export default (img_src, preProcessingFilters = [], postProcessingFilters = []) 
             canvas = e.createCanvas(100, 100)
             img = preProcessingFilters.reduce((res, f) => f(res), img)
             generator = floyd_steinberg_gen(img.get())
-            e.frameRate(1)
+            e.frameRate(10)
         }
         
         e.draw = function() {
@@ -39,7 +38,6 @@ export default (img_src, preProcessingFilters = [], postProcessingFilters = []) 
             postProcessedImage.resize(getCanvasDimensions().width, 0)
             e.resizeCanvas(getCanvasDimensions().width, postProcessedImage.height)
             e.image(postProcessedImage, 0,0)
-            dirty = false;
             e.redrawListeners.forEach(l => {
                 l(img.get(), x, y, oldColor, newColor)
             })

@@ -32,14 +32,23 @@ p {
 
 .quantisation_visualisation {
     display: grid;
-    grid-template-columns: 2.5fr 2.5fr 5fr;
+    grid-template-columns: 24% 24% 49%;
+    column-gap: 1%;
     grid-template-rows: 10fr;
+}
+
+
+.quantisation_visualisation_palette {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .algoritm_visualisation {
     width: 100%;
     display: grid;
-    grid-template-columns: 25% 25% 50%;
+    grid-template-columns: 24% 24% 49%;
+    column-gap: 1%;
     grid-template-rows: 10fr;
 }
 

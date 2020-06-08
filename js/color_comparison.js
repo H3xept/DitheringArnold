@@ -1,3 +1,5 @@
+import {getPixel} from "./imageUtils.js"
+
 export default () => {
     
     let img = null;
@@ -12,7 +14,7 @@ export default () => {
     return e => {
 
         function displayComparison() {
-            const [originalR, originalG, originalB] = img.get(currX,currY)
+            const [originalR, originalG, originalB] = getPixel(img)(currX, currY)
             const {width:parentW} = getParentDimensions()
             const [h, w] = [getImageAspectRatio() * (parentW/2) , parentW]
             const [oR, oG, oB] = oldColor

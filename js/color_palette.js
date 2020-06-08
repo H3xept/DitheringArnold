@@ -10,8 +10,8 @@ export default () => {
     return e => {
 
         const displayPalette = palette => {
-            const h = e.height
-            const w = e.width
+            const h = canvas.height
+            const w = canvas.width
             const rectW = w/palette.length
             palette.forEach((color, i) => {
                 e.fill(color)
@@ -19,6 +19,9 @@ export default () => {
                 const origin = rectW * i
                 e.rect(origin, 0, rectW, h)
             })
+            e.stroke(0,0,0, 255)
+            e.fill(0,0,0,0)
+            e.rect(0,0,w,h)
         }
 
         const calculatePalette = pixels => {
@@ -30,7 +33,7 @@ export default () => {
                     palette[s] = e.color(r,g,b)
                 }
             })
-            return Object.values(palette)
+            return Object.values(palette).sort()
         }
 
         e.newImage = function(i) {

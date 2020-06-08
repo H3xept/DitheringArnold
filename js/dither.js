@@ -7,7 +7,7 @@ import { getPixel, setPixel } from "./imageUtils.js";
  * @returns {int} the quantised value
  */
 const quantise = (max = 255) => (v, buckets = 2) => 
-    Math.round(((v/max) * (buckets - 1))) * (max/(buckets - 1))
+    Math.round((Math.min(max, v)/max) * (buckets - 1)) * Math.floor(max/(buckets - 1))
 
 /**
  * Pairwise adds elements in aa to elements in bb
