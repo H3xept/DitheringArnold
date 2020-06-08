@@ -13,7 +13,7 @@ const linearIndex = (x,y,w) => (x + y * w) * 4
  * @param {*} i the index of the pixel to get
  * @returns {[int]} RGB values
  */
-const rgbAt = (pixels, i) => [pixels[i], pixels[i+1], pixels[i+2]]
+const rgbaAt = (pixels, i) => [pixels[i], pixels[i+1], pixels[i+2], pixels[i+3]]
 
 /**
  * Sets a pixel in the given image to the values provided, at the given coordinates 
@@ -31,6 +31,8 @@ export const setPixel = img => (x, y, rgba) => {
     pixels[i + 2] = rgba[2]
     if (rgba.length > 3)
         pixels[i + 3] = rgba[3]
+    else
+        pixels[i + 3] = 255
 }
 
 /**
@@ -43,7 +45,7 @@ export const getPixel = img => (x,y) => {
     const w = img.width
     const i = linearIndex(x,y,w)
     const pixels = img.pixels
-    return rgbAt(pixels, i)
+    return rgbaAt(pixels, i)
 }
 
 /**

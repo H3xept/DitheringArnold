@@ -12,55 +12,92 @@
         <div class="header" id="header">
             <div id="header_image"></div>
             <article>
-                <h1>Dithering arnold for fun and profit</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <h1>Dithering Arnold - An animated demo</h1>
+                <p>In this page I'll present my work on dithering, more specifically, on dithering a picture of Arnold Schwarzenegger. The sole reason for the existence of this page is my desire of trying out p5.js and learning the basic usage of the library by using it in a real-world project. By making my experiments available in the form of an animated demo I hope to make the reader aware of a cool-yet-simple technique like dithering. All the research material used for this page can be found in <a href="https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering">this</a> wikipedia page. <b>All the images in this page are generated via JavaScript, there is no static image loaded aside from the non dithered Arnold.</b></p>
             </article>
         </div>
         <article>
             <h1>What is dithering?</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Dither(ing) is a form of noise used in both audio and video processing. In this case, dithering is used to reduce the color palette of an image while maintaining a somewhat high level of visual fidelity. As crazy as it sounds, the header image for this article contains only 8 different colors, carefully arranged by the dithering algoritm to trick our eyes in seeing intermediate colors. More specifically, there are two colors per color channel (Red, Green, Blue), but this can be increased arbitrarily in order to get a more accurate result. Clearly, increasing the amount of possible colors per channel means increasing the amount of bits needed to represent a single color in the final image; there is no "ultimate" amount of colors required in order to get a great result, it just depends on the requirements we have for the final image.</p>
         </article>
         <article>
             <h1>Quantisation visualisation</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Quantisation is the first step of the dithering process. In this context, 'to quantise' means restricting the initial color palette of the source image to a smaller color palette. As you can see below, quantisation produces a very coarse representation of the input image. The more colors per channel we decide to use, the closer our quantised image will resemble the original.</p>
             <div class="quantisation_visualisation">
-                <div><div id="qv_original"></div><span>Original</span></div>
-                <div><div id="qv_quantised"></div><span>Quantised</span></div>
+                <div><div id="qv_original"></div><span class="subtitle">Original image</span></div>
+                <div><div id="qv_quantised"></div><span class="subtitle">Quantised - 2 colors per channel</span></div>
                 <div class="quantisation_visualisation_palette">
-                    <div><div id="qv_original_cp"></div><span>Original color palette</span></div>
-                    <div><div id="qv_quantised_cp"></div><span>Quantised color palette</span></div>
+                    <div><div id="qv_original_cp"></div><span class="subtitle">Original color palette</span></div>
+                    <div><div id="qv_quantised_cp"></div><span class="subtitle">Quantised palette with 2 colors per channel</span></div>
                 </div>
             </div>
-        </article>
-
-        <article>
-            <h1>Algoritm visualisation</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            <div class="algoritm_visualisation">
-                <div><div id="firm_bottom"></div><span>Firm Bottom</span></div>
-                <div><div id="av_kernel"></div><span>Kernel</span></div>
-                <div><div id="av_color_comparison"></div><span>Kernel</span></div>
+            <div class="quantisation_visualisation">
+                <div><div id="qv_quantised_4"></div><span class="subtitle">Quantised - 3 colors per channel</span></div>
+                <div><div id="qv_quantised_8"></div><span class="subtitle">Quantised - 4 colors per channel</span></div>
+                <div class="quantisation_visualisation_palette">
+                    <div><div id="qv_quantised_4_cp"></div><span class="subtitle">Quantised palette with 3 colors per channel</span></div>
+                    <div><div id="qv_quantised_8_cp"></div><span class="subtitle">Quantised palette with 4 colors per channel</span></div>
+                </div>
             </div>
+            <p>Quantisation alone <b>can</b> help in reducing the color palette of an image but for each quantised pixel there is a 'quantisation error' that gets discarded. For example, if a pixel had the following RGB values [145, 12, 55], quantising it would produce the following pixel: [255, 0, 0] (100% red). The errors that I'm referring to as 'quantisation errors' in this case would be [145 - 255, 12 - 0, 55 - 0], aka, [-110, 12, 55].</p>
+            <p>Quantisation errors cause patches and jagged lines, like the ones you can see in the quantised pictures above. The next step in the dithering algoritm will make use of the quantisation errors to improve the quality of the image.</p>
         </article>
 
         <article>
             <h1>Quantised RGB channels</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>To better visualise the effect of quantisation (2 colors per channel) on the original picture I present the following three images.</p>
             <div class="hor_flex">
-                <div><div id="q_channel_r"></div><span>Red</span></div>
-                <div><div id="q_channel_g"></div><span>Green</span></div>
-                <div><div id="q_channel_b"></div><span>Blue</span></div>
+                <div><div id="q_channel_r"></div><span class="subtitle">Red</span></div>
+                <div><div id="q_channel_g"></div><span class="subtitle">Green</span></div>
+                <div><div id="q_channel_b"></div><span class="subtitle">Blue</span></div>
             </div>
+            <p>In each representation, only one color channel is showing. Note that I decided to replace all the blacks within the sulhouette with white pixels for stylistic purposes. This shouldn't affect the overall understanding. </p>
+        </article>
+
+        <article>
+            <h1>Algoritm visualisation</h1>
+            <p>The dithering algoritm used in this article is named 'Floyd-Steinberg Dithering' and it works by scanning a picture pixel by pixel and sequentially applying quantisation and error propagation.</p>
+            <p>The animation below shows: <br><br>
+                    <b>(1)</b> The original image getting slowly dithered<br>
+                    <b>(2)</b> A pixel kernel (a 3x3 matrix of pixels) with the currently scanned pixel in the middle<br>
+                    <b>(3)</b> The various colors of the currently scanned pixel at different stages of the algoritm<br></p>
+            <div class="algoritm_visualisation">
+                <div><div id="firm_bottom"></div><span class="subtitle">Original Image</span></div>
+                <div><div id="av_kernel"></div><span class="subtitle">Pixel Kernel</span></div>
+                <div><div id="av_color_comparison"></div><span class="subtitle">Color comparison</span></div>
+            </div>
+            <p>In the pixel kernel, aside from the central pixel, there are 4 more pixels of interest; they are labelled with e0 e1 e2 e3 and they represent the pixels that will be affected by the quantisation error propagation. Floyd-Steinberg's dithering specifies a weight to use as multiplicative coefficient for each of the 'e' pixels:                <br>
+                <ul>
+                    <li>e0: 7/16</li>
+                    <li>e1: 3/16</li>
+                    <li>e2: 5/16</li>
+                    <li>e3: 1/16</li>
+                </ul>
+            </p>
+            <p>The error is propagated to each channel of every 'e' pixel, following the formula (pseudocode): <br><br>
+            <b>newR = [oldR + quant_error * quant_error_weight]</b><br>
+            <b>newG = [oldG + quant_error * quant_error_weight]</b><br>
+            <b>newB = [oldB + quant_error * quant_error_weight]</b><br>
+        </p>
         </article>
 
         <article>
             <h1>Dithered RGB channels</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>To better visualise the product of the dithering process, I decided to split the final image in the three color channels and show them side by side. For each pixel found in the final image, the red channel shows where a non-zero value of red is present and the alpha repsents the intensity of the red channel for that specific pixel. The same applies for the other two channels.</p>
             <div class="hor_flex">
-                <div><div id="d_channel_r"></div><span>Red</span></div>
-                <div><div id="d_channel_g"></div><span>Green</span></div>
-                <div><div id="d_channel_b"></div><span>Blue</span></div>
+                <div><div id="d_channel_r"></div><span class="subtitle">Red</span></div>
+                <div><div id="d_channel_g"></div><span class="subtitle">Green</span></div>
+                <div><div id="d_channel_b"></div><span class="subtitle">Blue</span></div>
             </div>
+        </article>
+
+        <article>
+            <h1>Final notes</h1>
+            <p>As stated in the preface for this article, each image is produced via alterations of the original picture through JavaScript. This also means theat all the code is available for the reader to look at and modify as they desire.</p>
+            <p>If you want to reach out to the author (me!) feel free to contact me at <a href="mailto:leonardo@cascianelli.me">leonardo@cascianelli.me</a>.</p>
+            <p>If you found a problem with this page, all the code is available here, feel free to send a pull request.</p>
+            <hr>
+            <b>Leonardo Cascianelli - 2020</b>
         </article>
     </div>
     <script type="module" src="./js/index.js"></script>

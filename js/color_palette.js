@@ -43,6 +43,7 @@ export default () => {
                 }
             })
 
+            console.log(Object.values(palette).length)
             return Object.values(palette).sort()
         }
 

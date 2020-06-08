@@ -14,6 +14,7 @@ p {
 .container {
     width: 100vw;
     padding: 1rem;
+    overflow: hidden;
 }
 
 .header {
@@ -53,18 +54,18 @@ p {
     flex-direction: column;
 }
 
-/* temporary! */
 .quantisation_visualisation > div {
     width: 100%;
     height: 100%;
     min-height: 3rem;
+    margin-top: 1rem;
 }
 
-/* temporary! */
 .algoritm_visualisation > * {
     width: 100%;
     height: 100%;
     min-height: 3rem;
+    margin-top: 1rem;
 }
 
 .hor_flex {
@@ -76,7 +77,6 @@ p {
 }
 
 
-/* temporary! */
 .hor_flex > div {
     width: 100%;
     height: 100%;
@@ -85,6 +85,11 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.subtitle {
+    display: inline-block;
+    margin-top: 0.3rem;
 }
 
 @media only screen and (min-width: 700px) {

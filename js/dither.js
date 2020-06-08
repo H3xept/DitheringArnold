@@ -6,8 +6,9 @@ import { getPixel, setPixel } from "./imageUtils.js";
  * @param {int} buckets the number of quantisation steps
  * @returns {int} the quantised value
  */
-const quantise = (max = 255) => (v, buckets = 2) => 
-    Math.round((Math.min(max, v)/max) * (buckets - 1)) * Math.floor(max/(buckets - 1))
+const quantise = (max = 255) => (v, buckets = 2) =>
+    Math.floor(Math.round((Math.min(max, v)/max) * (buckets - 1)) * Math.floor(max/(buckets - 1)))
+    
 
 /**
  * Pairwise adds elements in aa to elements in bb
@@ -37,10 +38,10 @@ export const floyd_steinberg = (img, e1 = 7, e2 = 3, e3 = 5, e4 = 1, quantSteps 
 
     for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {    
-            const [oldR, oldG, oldB] = _getPixel(x,y)
+            const [oldR, oldG, oldB, oldA] = _getPixel(x,y)
             const [newR, newG, newB] = [oldR, oldG, oldB].map(e => _quantise(e, quantSteps))
-            const errors = [oldR-newR, oldG-newG, oldB-newB]
-            _setPixel(x, y, [newR, newG, newB])
+            const errors = [oldR-newR, oldG-newG, oldB-newB, 0]
+            _setPixel(x, y, [newR, newG, newB, oldA])
             
             // Propagate quantisation errors
             // https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
@@ -77,12 +78,13 @@ export const floyd_steinberg_gen = function*(img, e1 = 7, e2 = 3, e3 = 5, e4 = 1
     for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
             
-            const [oldR, oldG, oldB] = _getPixel(x,y)
+            const [oldR, oldG, oldB, oldA] = _getPixel(x,y)
             if (oldR === 0 && oldG === 0 && oldB === 0) continue;
+            if (oldR === 255 && oldG === 255 && oldB === 255) continue;
 
-            const [newR, newG, newB] = [oldR, oldG, oldB].map(e => _quantise(e, quantSteps))
-            const errors = [oldR-newR, oldG-newG, oldB-newB]
-            _setPixel(x, y, [newR, newG, newB])
+            const [newR, newG, newB] = [oldR, oldG, oldB, oldA].map(e => _quantise(e, quantSteps))
+            const errors = [oldR-newR, oldG-newG, oldB-newB, 0]
+            _setPixel(x, y, [newR, newG, newB, oldA])
             
             // Propagate quantisation errors
             // https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
@@ -93,7 +95,7 @@ export const floyd_steinberg_gen = function*(img, e1 = 7, e2 = 3, e3 = 5, e4 = 1
             
             // Very inefficient but this is just for demonstration purposes
             img.updatePixels()
-            yield {x, y, img:img.get(), newColor:[newR, newG, newB], oldColor:[oldR, oldG, oldB]}
+            yield {x, y, img:img.get(), newColor:[newR, newG, newB, oldA], oldColor:[oldR, oldG, oldB, oldA]}
         }
     }
     img.updatePixels()
@@ -105,7 +107,7 @@ export const floyd_steinberg_gen = function*(img, e1 = 7, e2 = 3, e3 = 5, e4 = 1
  * @param {*} img the image to quantise
  * @param {*} reducedColorPalette the number of colors per channel to use
  */
-export const quantiseImage = (img, reducedColorPalette = 2) => {
+export const quantiseImage = (reducedColorPalette = 2) => (img) => {
     img.loadPixels()
 
     const [w, h] = [img.width, img.height]
@@ -115,9 +117,9 @@ export const quantiseImage = (img, reducedColorPalette = 2) => {
 
     for (let x = 0; x < w; x++) {
         for (let y = 0; y < h; y++) {
-            const [oldR, oldG, oldB] = _getPixel(x,y)
+            const [oldR, oldG, oldB, oldA] = _getPixel(x,y)
             const [newR, newG, newB] = [oldR, oldG, oldB].map(e => _quantise(e, reducedColorPalette))
-            _setPixel(x, y, [newR, newG, newB])
+            _setPixel(x, y, [newR, newG, newB, oldA])
         }
     }
     img.updatePixels()
